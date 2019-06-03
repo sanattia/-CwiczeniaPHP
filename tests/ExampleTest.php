@@ -2,6 +2,7 @@
 /**
  * Example test.
  */
+
 namespace Test;
 
 use App\Example;
