@@ -12,15 +12,21 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "@phpcs-scripts"
+            "@phpcs-scripts",
+            "@phpcs",
+            "@phpcbf"
         ],
         "post-update-cmd": [
-            "@phpcs-scripts"
+            "@phpcs-scripts",
+            "@phpcs",
+            "@phpcbf"
         ],
         "phpcs-scripts": [
             "vendor/bin/phpcs --config-set installed_paths $(realpath vendor/escapestudios/symfony2-coding-standard)",
             "vendor/bin/phpcs --config-set default_standard Symfony"
-        ]
+        ],
+        "phpcs": "vendor/bin/phpcs --standard=Symfony --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests",
+        "phpcbf": "vendor/bin/phpcbf --standard=Symfony --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.1",
