@@ -2,5 +2,4 @@
 docker-compose build
 docker-compose up -d
 docker-compose exec php bash -c "cd /home/wwwroot/tdd_kata && composer install"
-echo 'Press Enter to exit'
-read junk
+docker-compose exec php bash
