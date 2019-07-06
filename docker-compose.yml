@@ -2,6 +2,6 @@ version: '3'
 services:
   php:
     build: .docker/php
-    container_name: tdd_kata_php
+    container_name: php_tdd_kata
     volumes:
       - .:/home/wwwroot/tdd_kata
