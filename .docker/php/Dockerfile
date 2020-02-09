@@ -1,4 +1,4 @@
-FROM php:7.3.14-fpm
+FROM php:7.4-fpm
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends vim curl debconf subversion git apt-transport-https apt-utils \
@@ -7,15 +7,33 @@ RUN apt-get update \
     zlib1g-dev libzip-dev \
     sudo
 
-RUN docker-php-ext-install pdo pdo_mysql zip
+# Install gd extension
+RUN apt-get update && \
+    apt-get install -y  libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng-dev \
+    zlib1g-dev libxml2-dev libzip-dev libonig-dev graphviz && \
+    docker-php-source extract && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install -j$(nproc) gd && \
+    docker-php-source delete
 
+# Install MySQL extension
+RUN docker-php-source extract && \
+    docker-php-ext-install pdo pdo_mysql zip && \
+    docker-php-source delete
+
+# Install Intl
+RUN docker-php-source extract && \
+    docker-php-ext-configure intl && \
+    docker-php-ext-install intl && \
+    docker-php-source delete
+
+# Setup php.ini
 COPY php.ini /usr/local/etc/php/php.ini
 COPY php-fpm-pool.conf 	/usr/local/etc/php/pool.d/www.conf
 
 # Install Composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
+	mv composer.phar /usr/local/bin/composer
 
 # Install xdebug
 RUN pecl install xdebug
@@ -24,7 +42,7 @@ RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-x
 RUN echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-#RUN echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.idekey=\"PHPSTORM\"" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_port=9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -48,6 +66,7 @@ RUN passwd -d dev
 RUN rm -rf /var/lib/apt/lists/*
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen && \
+    echo "pl_PL.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen
 
 RUN echo "dev ALL=(ALL) ALL" > /etc/sudoers
