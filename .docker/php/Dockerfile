@@ -1,15 +1,16 @@
 FROM php:7.4-fpm
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends vim curl debconf subversion git apt-transport-https apt-utils \
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils vim curl debconf \
+    subversion git apt-transport-https \
     build-essential locales acl mailutils wget nodejs zip unzip \
     gnupg gnupg1 gnupg2 \
-    zlib1g-dev libzip-dev \
+    zlib1g-dev \
     sudo
 
 # Install gd extension
 RUN apt-get update && \
-    apt-get install -y  libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng-dev \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y  libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng-dev \
     zlib1g-dev libxml2-dev libzip-dev libonig-dev graphviz && \
     docker-php-source extract && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
@@ -18,7 +19,7 @@ RUN apt-get update && \
 
 # Install MySQL extension
 RUN docker-php-source extract && \
-    docker-php-ext-install pdo pdo_mysql zip && \
+    docker-php-ext-install pdo_mysql zip && \
     docker-php-source delete
 
 # Install Intl
@@ -36,6 +37,7 @@ RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 	mv composer.phar /usr/local/bin/composer
 
 # Install xdebug
+RUN docker-php-source extract
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -50,14 +52,19 @@ RUN echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext
 # RUN echo "xdebug.remote.host=10.0.75.1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 # RUN echo "xdebug.remote.mode=req" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 # RUN echo "xdebug.remote.handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN docker-php-source delete
 
-# Install NodeJS
-#RUN	echo "deb https://deb.nodesource.com/node_6.x jessie main" >> /etc/apt/sources.list.d/nodejs.list && \
+# Install Node.js
+#RUN	echo "deb https://deb.nodesource.com/node_13.x jessie main" >> /etc/apt/sources.list.d/nodejs.list && \
 #	wget -nv -O -  https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-#	echo "deb-src https://deb.nodesource.com/node_6.x jessie main" >> /etc/apt/sources.list.d/nodejs.list && \
+#	echo "deb-src https://deb.nodesource.com/node_13.x jessie main" >> /etc/apt/sources.list.d/nodejs.list && \
 #    apt-get update && \
-#	apt-get install -y --force-yes nodejs && \
+#	DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs && \
 #	rm -f /etc/apt/sources.list.d/nodejs.list
+
+# APT cleanup
+RUN apt-get autoremove -y && \
+    apt-get autoclean -y
 
 RUN groupadd dev -g 999
 RUN useradd dev -g dev -d /home/dev -m
