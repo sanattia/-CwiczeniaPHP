@@ -1,7 +1,13 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit>
-    <testsuite name='unitTests'>
-        <directory suffix='Test.php'>./tests</directory>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         backupGlobals="false"
+         colors="true">
+
+    <testsuite name="unitTests">
+        <directory suffix="Test.php">./tests</directory>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

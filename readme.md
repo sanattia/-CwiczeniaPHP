@@ -9,3 +9,7 @@ Docker image is based on: https://medium.com/@romaricp/the-perfect-kit-starter-f
 * Setup remote Docker Interpreter: https://blog.jetbrains.com/phpstorm/2016/11/docker-remote-interpreters/
 
 * Setup Quality Tools in PhpStorm.
+
+# Usage
+
+* run tests with code coverage report: `export XDEBUG_MODE="coverage" && vendor/bin/phpunit --coverage-text`
