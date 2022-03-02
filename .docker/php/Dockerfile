@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.1-fpm
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils vim curl debconf \
@@ -33,21 +33,25 @@ COPY php.ini /usr/local/etc/php/php.ini
 COPY php-fpm-pool.conf 	/usr/local/etc/php/pool.d/www.conf
 
 # Install Composer
-RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
-	mv composer.phar /usr/local/bin/composer
+RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls --version=2.2.5 && \
+mv composer.phar /usr/local/bin/composer
 
 # Install xdebug
 RUN docker-php-source extract
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
-RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/error_reporting.ini
+RUN echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/error_reporting.ini
+RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/error_reporting.ini
+RUN echo "xdebug.mode=develop,coverage,debug,trace" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.start_with_request=trigger" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.discover_client_host=1"  >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.idekey=\"PHPSTORM\"" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.var_display_max_children=128" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.var_display_max_data=512" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.var_display_max_depth=3" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 RUN docker-php-source delete
 
 # APT cleanup
