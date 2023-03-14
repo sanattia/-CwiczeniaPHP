@@ -7,10 +7,13 @@ class FizzBuzzKata
     private array $result = [];
     public function  fizzBuzz(): void{
         for ($i = 0; $i < 100; ++$i){
-            if (($i + 1) % 3 === 0) {
+            if ($this->isDivisibleByThree($i + 1) && $this->isDivisibleByFive($i + 1)) {
+                $this->result[$i] = 'FizzBuzz';
+            }
+            elseif ($this->isDivisibleByThree($i + 1)) {
                 $this->result[$i] = 'Fizz';
             }
-            elseif (($i + 1) % 5 === 0) {
+            elseif ($this->isDivisibleByFive($i + 1)) {
                 $this->result[$i] = 'Buzz';
             }
             else{
@@ -19,7 +22,17 @@ class FizzBuzzKata
         }
     }
 
-    public function getValue(int $number): int{
+    public function getValue(int $number): string{
         return (string) $this->result[$number - 1];
     }
+
+    private function isDivisibleByThree(int $number): bool {
+        return $number % 3 === 0;
+    }
+
+
+private function isDivisibleByFive(int $number): bool
+{
+    return $number % 5 === 0;
+}
 }

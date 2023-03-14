@@ -7,6 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 class FizzBuzzKataTest extends TestCase
 {
+    /**
+     * @dataProvider dataProviderForTestFizzBuzz
+     */
     public function testFizzBuzz(int $input, string $expected): void{
 
         $fizzBuzzKata = new FizzBuzzKata();
@@ -22,15 +25,15 @@ class FizzBuzzKataTest extends TestCase
     {
         yield 'value for number 1' => [
             'input' => 1,
-            'expected' => 1,
+            'expected' => '1',
         ];
         yield 'value for number 3' => [
             'input' => 3,
-            'expected' => "Fizz",
+            'expected' => 'Fizz',
         ];
         yield 'value for number 5' => [
             'input' => 5,
-            'expected' => "Buzz",
+            'expected' => 'Buzz',
         ];
     }
 }
