@@ -6,10 +6,20 @@ class FizzBuzzKata
 
     private array $result = [];
     public function  fizzBuzz(): void{
-        $this->result = range(1,100);
+        for ($i = 0; $i < 100; ++$i){
+            if (($i + 1) % 3 === 0) {
+                $this->result[$i] = 'Fizz';
+            }
+            elseif (($i + 1) % 5 === 0) {
+                $this->result[$i] = 'Buzz';
+            }
+            else{
+                $this->result[$i] = (string) ($i + 1);
+            }
+        }
     }
 
     public function getValue(int $number): int{
-        return $this->result[$number - 1];
+        return (string) $this->result[$number - 1];
     }
 }

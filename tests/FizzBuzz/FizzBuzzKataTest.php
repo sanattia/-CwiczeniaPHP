@@ -7,14 +7,15 @@ use PHPUnit\Framework\TestCase;
 
 class FizzBuzzKataTest extends TestCase
 {
-    public function testFizzBuzz(): void{
+    public function testFizzBuzz(int $input, string $expected): void{
 
         $fizzBuzzKata = new FizzBuzzKata();
         $fizzBuzzKata->fizzBuzz();
 
 
-        $actual = $fizzBuzzKata->getValue(1);
-        $this->assertSame(1, $actual);
+        $actual = $fizzBuzzKata->getValue($input);
+        $this->assertSame($expected, $actual);
+
     }
 
     public function dataProviderForTestFizzBuzz(): \Generator
@@ -22,6 +23,14 @@ class FizzBuzzKataTest extends TestCase
         yield 'value for number 1' => [
             'input' => 1,
             'expected' => 1,
+        ];
+        yield 'value for number 3' => [
+            'input' => 3,
+            'expected' => "Fizz",
+        ];
+        yield 'value for number 5' => [
+            'input' => 5,
+            'expected' => "Buzz",
         ];
     }
 }
