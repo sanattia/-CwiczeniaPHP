@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FizzBuzz;
+namespace App\FizzBuzz\_01;
 class FizzBuzzKata
 {
 
